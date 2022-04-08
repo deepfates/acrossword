@@ -11,7 +11,7 @@ import requests
 
 
 def server_wrapper(func):
-    """Checks for a server at http://localhost:22647/. If there isn't one, it sets server_is_running to False, and it returns the function as per normal. Otherwise, it returns a function that takes the **kwargs and makes a post request to the server using the kwargs, and a field called 'method' with the name of the function. If that fails, it calls the function as per normal."""
+    """Checks for a server at http://acrossword.internal:22647/. If there isn't one, it sets server_is_running to False, and it returns the function as per normal. Otherwise, it returns a function that takes the **kwargs and makes a post request to the server using the kwargs, and a field called 'method' with the name of the function. If that fails, it calls the function as per normal."""
 
     async def interceptor_inner_wrapper(self, **kwargs):
         if self.is_server:
@@ -21,7 +21,7 @@ def server_wrapper(func):
             return await func(self, **kwargs)
         if self.server_is_running == None:
             try:
-                requests.post("http://localhost:22647/")
+                requests.post("http://acrossword.internal:22647/")
                 self.server_is_running = True
                 pass
             except requests.exceptions.ConnectionError:
@@ -29,7 +29,7 @@ def server_wrapper(func):
                 return await func(self, **kwargs)
         async with aiohttp.ClientSession() as session:
             body = {"method": func.__name__, **kwargs}
-            async with session.post("http://localhost:22647/", json=body) as resp:
+            async with session.post("http://acrossword.internal:22647/", json=body) as resp:
                 r = await resp.read()
         try:
             obj = pickle.loads(r)
