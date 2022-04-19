@@ -24,19 +24,21 @@ def server_wrapper(func):
                 host = "http://localhost:22647/"
                 requests.post(host)
                 self.server_is_running = True
+                self.server_host = host
                 pass
             except requests.exceptions.ConnectionError:
                 try:
                     host = "http://acrossword.internal:22647/"
                     requests.post(host)
                     self.server_is_running = True
+                    self.server_host = host
                     pass
                 except requests.exceptions.ConnectionError:
                     self.server_is_running = False
                     return await func(self, **kwargs)
         async with aiohttp.ClientSession() as session:
             body = {"method": func.__name__, **kwargs}
-            async with session.post(host, json=body) as resp:
+            async with session.post(self.server_host, json=body) as resp:
                 r = await resp.read()
         try:
             obj = pickle.loads(r)
@@ -64,6 +66,7 @@ class Ranker:
 
     server_is_running = None
     is_loading_model = False
+    server_host = None
 
     def __init__(
         self,  # model_locations: List[str] = list(),

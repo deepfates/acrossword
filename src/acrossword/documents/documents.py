@@ -177,7 +177,7 @@ class Document(Searchable):
 
         ranker = Ranker()
         if not ranker.is_loading_model and await ranker.is_empty():
-            ranker._download_model(self.embedding_model)
+            await ranker.add_model(model_name = self.embedding_model)
         while await ranker.is_empty():
             await asyncio.sleep(0.2)
         # logger.debug(f"Converting the chunks to embeddings")

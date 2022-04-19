@@ -1,4 +1,4 @@
-from .rankers.rank import Ranker
+from acrossword import Ranker
 
 ranker = Ranker(is_server=True)
 from quart import (
@@ -40,4 +40,7 @@ def run():
     """This will create a background server. It's useful if you frequently
     need to restart whatever project you're working on and you're finding the
     time spent reloading SentenceTransformers is too much"""
-    app.run(host="localhost", port=22647, use_reloader=False)
+    app.run(host="[::]", port=22647, use_reloader=False)
+
+if __name__ == "__main__":
+    run()
